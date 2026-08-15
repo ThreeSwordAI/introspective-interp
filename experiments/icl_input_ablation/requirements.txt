@@ -1,0 +1,10 @@
+# torch is installed separately with the CUDA wheel index (see README, step 1
+# of the HPC commands) - do not pin it here.
+transformers>=4.51
+datasets
+accelerate
+scikit-learn
+pandas
+numpy
+matplotlib
+huggingface_hub
