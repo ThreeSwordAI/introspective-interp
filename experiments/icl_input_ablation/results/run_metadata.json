@@ -1,0 +1,116 @@
+{
+  "model": "Qwen/Qwen3-8B",
+  "dataset": "Transluce/input_ablation_qwen3_8b_mmlu_hint",
+  "torch_version": "2.10.0+cu128",
+  "transformers_version": "5.1.0",
+  "decoding": {
+    "do_sample": false,
+    "max_new_tokens": 40,
+    "batch_size": 8,
+    "dtype": "bfloat16",
+    "padding_side": "left"
+  },
+  "enable_thinking": false,
+  "split_sizes": {
+    "train": 12642,
+    "test": 1400
+  },
+  "limit": null,
+  "git_commit": "7ada6f60741e882608824dd5dec9b5cad4b6558e",
+  "yaml_check": "embedded template verified verbatim against /home/hpc/iwi5/iwi5359h/my_repos/introspective-interp/config/input_ablation/zs_qwen_qwen_hint.yaml",
+  "timestamp_utc": "2026-08-15T16:42:48.095501+00:00",
+  "conditions": {
+    "k0_seed0": {
+      "demo_train_indices": [],
+      "n_evaluated": 1400,
+      "skipped_too_long": [],
+      "unparseable": 0,
+      "finished_at_utc": "2026-08-15T16:46:32.138394+00:00"
+    },
+    "k4_seed0": {
+      "demo_train_indices": [
+        9557,
+        931,
+        10336,
+        5941
+      ],
+      "n_evaluated": 1400,
+      "skipped_too_long": [],
+      "unparseable": 0,
+      "finished_at_utc": "2026-08-15T16:56:26.707381+00:00"
+    },
+    "k4_seed1": {
+      "demo_train_indices": [
+        3438,
+        5869,
+        1631,
+        2602
+      ],
+      "n_evaluated": 1400,
+      "skipped_too_long": [],
+      "unparseable": 0,
+      "finished_at_utc": "2026-08-15T17:02:53.255493+00:00"
+    },
+    "k4_seed2": {
+      "demo_train_indices": [
+        1453,
+        8496,
+        1865,
+        2389
+      ],
+      "n_evaluated": 1400,
+      "skipped_too_long": [],
+      "unparseable": 0,
+      "finished_at_utc": "2026-08-15T17:09:30.563960+00:00"
+    },
+    "k8_seed0": {
+      "demo_train_indices": [
+        1055,
+        9557,
+        6679,
+        11893,
+        6790,
+        10336,
+        12187,
+        9807
+      ],
+      "n_evaluated": 1400,
+      "skipped_too_long": [],
+      "unparseable": 0,
+      "finished_at_utc": "2026-08-15T17:25:28.766903+00:00"
+    },
+    "k8_seed1": {
+      "demo_train_indices": [
+        6566,
+        12449,
+        1631,
+        11143,
+        11729,
+        9036,
+        3438,
+        3031
+      ],
+      "n_evaluated": 1400,
+      "skipped_too_long": [],
+      "unparseable": 0,
+      "finished_at_utc": "2026-08-15T17:36:44.425693+00:00"
+    },
+    "k8_seed2": {
+      "demo_train_indices": [
+        4755,
+        5790,
+        2212,
+        9013,
+        2389,
+        6921,
+        3830,
+        1453
+      ],
+      "n_evaluated": 1400,
+      "skipped_too_long": [],
+      "unparseable": 0,
+      "finished_at_utc": "2026-08-15T17:48:01.783952+00:00"
+    }
+  },
+  "gpu": "NVIDIA A40"
+}
