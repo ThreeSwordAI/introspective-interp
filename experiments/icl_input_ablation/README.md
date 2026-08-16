@@ -70,15 +70,38 @@ Moving from pilot to full run needs no cleanup: a predictions file only satisfie
 
 ## Results
 
-<!-- FILLED IN PHASE 2 -->
+Full test split (n = 1,400 per condition), Qwen3-8B, greedy decoding. Parse rate was **1.0 in every condition** (0 unparseable outputs out of 9,800 generations). All scores in percent; ΔEM is the paired difference vs k=0 with a 10,000-resample bootstrap 95% CI.
+
+| k | seed | n | parse rate | Exact Match | Has-Changed F1 (macro) | Content Match | ΔEM vs k=0 [95% CI] |
+|---|------|------|-----------|-------------|------------------------|---------------|----------------------|
+| 0 | –    | 1400 | 1.00 | 30.07 | 25.33 | 40.00 | – |
+| 4 | 0    | 1400 | 1.00 | 43.71 | 48.82 | 50.86 | +13.64 [+11.14, +16.29] |
+| 4 | 1    | 1400 | 1.00 | 56.36 | 62.16 | 65.43 | +26.29 [+23.14, +29.36] |
+| 4 | 2    | 1400 | 1.00 | 46.29 | 50.71 | 54.21 | +16.21 [+13.57, +18.79] |
+| **4** | **mean** | | 1.00 | **48.79** | **53.90** | **56.83** | **+18.71** |
+| 8 | 0    | 1400 | 1.00 | 41.57 | 45.71 | 48.07 | +11.50 [+9.00, +14.07] |
+| 8 | 1    | 1400 | 1.00 | 49.00 | 55.87 | 56.79 | +18.93 [+16.14, +21.79] |
+| 8 | 2    | 1400 | 1.00 | 47.86 | 52.64 | 55.21 | +17.79 [+15.07, +20.57] |
+| **8** | **mean** | | 1.00 | **46.14** | **51.41** | **53.36** | **+16.07** |
+
+Reference (paper Table 2): untrained Qwen3-8B 8.9 / 44.4 / 35.3; fine-tuned self-explainer 83.4 / 87.0 / 90.6 — see the baseline-comparability note under Interpretation before comparing to the untrained row.
+
+![Metrics vs k, with paper reference lines](results/plot.png)
 
 ## Interpretation
 
-<!-- FILLED IN PHASE 2 -->
+**Outcome: ICL clearly lifts the untrained explainer, but stays far below the fine-tuned ceiling** (outcome B in the study plan). Four balanced demonstrations raise mean Exact Match from 30.07 to 48.79 (ΔEM per seed +13.64 / +26.29 / +16.21, every 95% CI excluding zero); eight demonstrations give 46.14 (+11.50 / +18.93 / +17.79). Even the best single condition (k=4, seed 1: EM 56.36) remains ~27 points below the fine-tuned 83.4. So part of the self-explanation capability is elicitable by task induction alone — the claim "fine-tuning is essential" is better stated as "zero-shot elicitation is weak; ICL recovers a meaningful fraction of the capability, and fine-tuning is what makes it reliable."
+
+**Mechanism.** At k=0 the model's policy is degenerate: it answers "remain unchanged" on 99.5% of items (7/1,400 "change to" verdicts), exact-matching 90.1% of unchanged golds but 0.11% of changed golds (gold rate: 66.7% changed). Demonstrations partially un-collapse this prior — the predicted-changed rate rises to 26–52% across k>0 conditions — which is where the EM/F1 gains come from. This also explains the two secondary observations: k=8 is *not* better than k=4 on average (46.14 vs 48.79), and demo-seed variance is large (k=4 EM spans 43.71–56.36), i.e., which random balanced bank you draw matters more than adding four more demos.
+
+**Baseline comparability (why our k=0 ≠ the paper's 8.9/44.4/35.3).** Our k=0 baseline is *stronger by construction*, so the untrained row of Table 2 is only indicative here: (1) this pipeline holds `enable_thinking=False` with `max_new_tokens=40`, yielding a 100% parse rate, while the upstream eval code passes no `enable_thinking` (Qwen3's chat template then defaults to thinking mode) with a ~50-token generation cap, which truncates deliberation and yields invalid outputs that score 0 under strict exact match; (2) our EM is parse-based, though this matters little here — re-scoring our k=0 raw outputs with the paper's strict-string normalization against upstream's "most likely" gold phrasing gives 30.00 vs our 30.07, because the k=0 model almost never emits a changed verdict; (3) our Has-Changed F1 is a macro average over parseable items — at k=0 it decomposes into F1(changed)=0.85 (recall 0.4%) and F1(unchanged)=49.81, a class-collapse signature that validity-filtered accounting hides; (4) we evaluate all 1,400 test rows, whereas the upstream dataloader skips prompts over 500 tokens. The within-experiment comparisons (k>0 vs k=0, identical prompt template, identical decoding, paired on items) are unaffected by all four points; the fine-tuned 83.4/87.0/90.6 remains the meaningful ceiling.
 
 ## Reproducibility
 
-<!-- FILLED IN PHASE 2 -->
+- Predictions were generated on the FAU NHR Alex cluster, 1× NVIDIA A40, from code commit `7ada6f60741e882608824dd5dec9b5cad4b6558e` (recorded in `results/run_metadata.json`); the results were committed as `e71209c67296871cd9e2e3decb6563b7f3867f4a`.
+- Environment: Python 3.12 conda env, `torch 2.10.0+cu128`, `transformers 5.1.0`; bf16, greedy decoding, `max_new_tokens=40`, batch size 8, left padding, `enable_thinking=False`.
+- Full test split (1,400 items), no items skipped for length; demo seeds 0/1/2; the exact demo train-row indices per condition are in `results/run_metadata.json`. Total GPU wall time ≈ 65 min for all 7 conditions.
+- Scoring is deterministic: re-running `python3 score.py` on the committed `preds_*.jsonl` regenerates `metrics.csv` byte-identically (bootstrap RNG seeded with 12345).
 
 ## Limitations
 

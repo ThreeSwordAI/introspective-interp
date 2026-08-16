@@ -1,3 +1,22 @@
+# Fork notice
+
+This is a fork of [TransluceAI/introspective-interp](https://github.com/TransluceAI/introspective-interp)
+(Li et al., *Training Language Models to Explain Their Own Computations*, arXiv:2511.08579).
+
+Here I test whether the paper's untrained input-ablation baseline (zero-shot, format examples only,
+Appendix H.3) underestimates what balanced few-shot in-context learning can elicit from Qwen3-8B
+without any weight updates. Finding: with 4 balanced demonstrations, parse-based exact match rises
+from 30.1 (k=0) to 48.8 on average over 3 demo seeds (k=8: 46.1; paper's fine-tuned self-explainer: 83.4),
+with every paired 95% CI excluding zero — so a meaningful part of the self-explanation capability is
+elicitable by in-context task induction alone, but it stays far below the fine-tuned ceiling.
+
+Please see **[`experiments/icl_input_ablation/`](experiments/icl_input_ablation/)** for the code,
+HPC commands, and full results.
+
+---
+
+*Below is the original README of the upstream repository, unchanged:*
+
 # Training Language Models To Explain Their Own Computations
 
 [![Paper](https://img.shields.io/badge/arXiv-2511.08579-b31b1b.svg)](https://arxiv.org/abs/2511.08579)
